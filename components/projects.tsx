@@ -71,13 +71,13 @@ const Projects = () => {
   const projects: Project[] = [
     {
       id: 1,
-      title: "Full-Stack Authentication Web App",
+      title: "Full-Stack Web Authentication App",
       description:
-        "Full-stack web authection with login singup , reset password dashboard , verify email etc. ",
-      image: "/placeholder.svg?height=400&width=600",
-      tags: ["React", "Next.js", "MongoDB", "Tailwind CSS"],
-      liveUrl: "#",
-      githubUrl: "#",
+        "A full-stack authentication system built with Next.js and MongoDB, featuring secure login, registration, email verification, and password reset via email. It includes forgot password support and protected routes. Email notifications are integrated for seamless user interaction, ensuring a complete and scalable authentication flow for modern web applications.",
+      image: "/nextauth.png?height=400&width=600",
+      tags: ["ReactJS", "NextJs", "MongoDB", "Tailwind CSS","JWT","NodeJS","Express"],
+      liveUrl: "https://next-js-auth-coral.vercel.app/",
+      githubUrl: "https://github.com/Vivek-018/Next.jsAuth.git",
     },
     {
       id: 2,
@@ -93,11 +93,11 @@ const Projects = () => {
       id: 3,
       title: "Tube-You Backend",
       description:
-        "A full-stack web application that allows users to upload and share videos with friends and family.",
-      image: "/placeholder.svg?height=400&width=600",
-      tags: ["node.js", "express", "cloudinary", "MongoDB"],
-      liveUrl: "#",
-      githubUrl: "#",
+        "A complete YouTube-style backend built with Node.js, Express.js, and MongoDB. Features include user authentication with JWT, video uploads via Cloudinary, user profiles, likes, comments, and playlist management. The API is designed to be scalable and secure, handling core video platform functionalities with a clean RESTful architecture.",
+      image: "/tube-you.png?height=400&width=600",
+      tags: ["NodeJS", "Express", "cloudinary", "MongoDB" , "JWT","Mongoose","JavaScript","Rest API","Bcrypt" , "Multer","CORS","Response"],
+      liveUrl: "https://tube-you-backend.vercel.app/",
+      githubUrl: "https://github.com/Vivek-018/Tube-You-Backend.git",
     },
     {
       id: 4,
