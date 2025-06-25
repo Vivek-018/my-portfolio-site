@@ -1,63 +1,156 @@
-import { type NextRequest, NextResponse } from "next/server"
+import { type NextRequest, NextResponse } from "next/server";
+import connectDB from "@/lib/db";
+import Visitor, { IVisitor } from "@/models/visitor";
+import VisitorCounter, { IVisitorCounter } from "@/models/VisitorCounter";
+import { processVisitorRequest, sanitizeUserAgent } from "@/lib/visitorUtils";
+import { VisitorResponse, VisitorErrorResponse } from "@/types/visitor";
 
-// In a real application, you would use a database
-// For this example, we'll use a simple in-memory counter
-// In production, consider using Redis, MongoDB, or any other database
-
-let visitorCount = 1247 // Starting count
-
-// Simple in-memory storage (resets on server restart)
-// In production, use a persistent database
-const visitors = new Set<string>()
-
-export async function POST(request: NextRequest) {
+export async function POST(
+  request: NextRequest
+): Promise<NextResponse<VisitorResponse | VisitorErrorResponse>> {
   try {
-    // Get client IP address for unique visitor tracking
-    const forwarded = request.headers.get("x-forwarded-for")
-    const ip = forwarded ? forwarded.split(",")[0] : request.headers.get("x-real-ip") || "unknown"
+    await connectDB();
 
-    // Get user agent for additional uniqueness
-    const userAgent = request.headers.get("user-agent") || ""
+    const { ip, userAgent, currentHour, visitorKey } =
+      processVisitorRequest(request);
 
-    // Create a unique identifier
-    const visitorId = `${ip}-${userAgent.slice(0, 50)}`
+    const sanitizedUserAgent = sanitizeUserAgent(userAgent);
 
-    // Check if this is a new visitor (in the last hour)
-    const now = Date.now()
-    const visitorKey = `${visitorId}-${Math.floor(now / (1000 * 60 * 60))}` // Hour-based uniqueness
+    // Check if visitor already exists for this hour
+    const existingVisitor: IVisitor | null = await Visitor.findOne({
+      visitorId: visitorKey,
+    });
 
-    if (!visitors.has(visitorKey)) {
-      visitors.add(visitorKey)
-      visitorCount++
+    let visitorCount: number;
 
-      // Clean up old entries (keep only last 24 hours)
-      const cutoff = Math.floor(now / (1000 * 60 * 60)) - 24
-      for (const key of visitors) {
-        const keyTime = Number.parseInt(key.split("-").pop() || "0")
-        if (keyTime < cutoff) {
-          visitors.delete(key)
-        }
-      }
+    if (!existingVisitor) {
+      // New visitor - create record
+      const newVisitor: IVisitor = await Visitor.create({
+        visitorId: visitorKey,
+        ip: ip,
+        userAgent: sanitizedUserAgent,
+        hourKey: currentHour,
+      });
+
+      console.log(`New visitor tracked: ${newVisitor.visitorId}`);
+
+      // Increment global counter using findOneAndUpdate with atomic operation
+      const counter: IVisitorCounter | null =
+        await VisitorCounter.findOneAndUpdate(
+          { _id: "visitor_count" },
+          {
+            $inc: { count: 1 },
+            $set: { lastUpdated: new Date() },
+          },
+          {
+            upsert: true,
+            new: true,
+          }
+        );
+
+      visitorCount = counter?.count || 1247;
+
+      // Clean up old entries (older than 24 hours) - run in background
+      const cutoffHour = currentHour - 24;
+      Visitor.deleteMany({
+        hourKey: { $lt: cutoffHour },
+      }).catch((error) => {
+        console.error("Error cleaning up old visitor records:", error);
+      });
+    } else {
+      console.log(`Existing visitor: ${existingVisitor.visitorId}`);
+
+      // Existing visitor - just return current count
+      const counter: IVisitorCounter | null = await VisitorCounter.findOne({
+        _id: "visitor_count",
+      });
+      visitorCount = counter?.count || 1247;
     }
 
-    return NextResponse.json({
+    const response: VisitorResponse = {
       count: visitorCount,
       success: true,
-    })
+    };
+
+    return NextResponse.json(response);
   } catch (error) {
-    console.error("Error tracking visitor:", error)
-    return NextResponse.json({ error: "Failed to track visitor" }, { status: 500 })
+    console.error("Error tracking visitor:", error);
+
+    const errorResponse: VisitorErrorResponse = {
+      error: "Failed to track visitor",
+    };
+
+    return NextResponse.json(errorResponse, { status: 500 });
   }
 }
 
-export async function GET() {
+export async function GET(): Promise<
+  NextResponse<VisitorResponse | VisitorErrorResponse>
+> {
   try {
-    return NextResponse.json({
+    await connectDB();
+
+    // Get current visitor count
+    const counter: IVisitorCounter | null = await VisitorCounter.findOne({
+      _id: "visitor_count",
+    });
+
+    const visitorCount: number = counter?.count || 100;
+
+    const response: VisitorResponse = {
       count: visitorCount,
       success: true,
-    })
+    };
+
+    return NextResponse.json(response);
   } catch (error) {
-    console.error("Error getting visitor count:", error)
-    return NextResponse.json({ error: "Failed to get visitor count" }, { status: 500 })
+    console.error("Error getting visitor count:", error);
+
+    const errorResponse: VisitorErrorResponse = {
+      error: "Failed to get visitor count",
+    };
+
+    return NextResponse.json(errorResponse, { status: 500 });
   }
 }
+
+/**
+ * Optional: DELETE endpoint to reset visitor count (for admin use)
+ */
+
+// export async function DELETE(): Promise<
+//   NextResponse<VisitorResponse | VisitorErrorResponse>
+// > {
+//   try {
+
+//     await connectDB();
+
+//     // Reset counter
+//     await VisitorCounter.findOneAndUpdate(
+//       { _id: "visitor_count" },
+//       {
+//         count: 0,
+//         lastUpdated: new Date(),
+//       },
+//       { upsert: true }
+//     );
+
+//     // Clear all visitor records
+//     await Visitor.deleteMany({});
+
+//     const response: VisitorResponse = {
+//       count: 0,
+//       success: true,
+//     };
+
+//     return NextResponse.json(response);
+//   } catch (error) {
+//     console.error("Error resetting visitor count:", error);
+
+//     const errorResponse: VisitorErrorResponse = {
+//       error: "Failed to reset visitor count",
+//     };
+
+//     return NextResponse.json(errorResponse, { status: 500 });
+//   }
+// }
