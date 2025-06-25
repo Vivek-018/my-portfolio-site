@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/db";
-import Visitor, { IVisitor } from "@/models/visitor";
+import Visitor, { IVisitor } from "@/models/Visitor";
 import VisitorCounter, { IVisitorCounter } from "@/models/VisitorCounter";
 import { processVisitorRequest, sanitizeUserAgent } from "@/lib/visitorUtils";
 import { VisitorResponse, VisitorErrorResponse } from "@/types/visitor";
