@@ -1,0 +1,278 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Dark theme colors */
+  --foreground-rgb: 226, 232, 240;
+  --background-rgb: 15, 23, 42;
+  --accent-blue: 96, 165, 250;
+  --accent-soft: 59, 130, 246;
+  --accent-pastel: 30, 58, 138;
+  --secondary-gray: 148, 163, 184;
+  --surface-light: 30, 41, 59;
+  --border-light: 51, 65, 85;
+  --card-bg: 30, 41, 59;
+  --text-primary: 248, 250, 252;
+  --text-secondary: 203, 213, 225;
+  --text-muted: 148, 163, 184;
+
+  /* Dark theme specific colors */
+  --accent-amber: 251, 191, 36;
+  --accent-amber-soft: 252, 211, 77;
+  --surface-dark: 15, 23, 42;
+  --surface-darker: 2, 6, 23;
+  --border-dark: 71, 85, 105;
+}
+
+@layer base {
+  * {
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+  }
+
+  body {
+    color: rgb(var(--foreground-rgb));
+    background: rgb(var(--background-rgb));
+    font-family: var(--font-noto-serif);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-cinzel);
+    color: rgb(var(--text-primary));
+  }
+}
+
+/* Enhanced border styling */
+.elegant-border {
+  position: relative;
+}
+
+.elegant-border::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, rgba(var(--accent-blue), 0.6) 50%, transparent 100%);
+}
+
+.elegant-border::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, rgba(var(--accent-blue), 0.6) 50%, transparent 100%);
+}
+
+/* Subtle pattern background */
+.pattern-bg {
+  background-color: rgb(var(--surface-light));
+  background-image: radial-gradient(rgba(var(--accent-amber), 0.05) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.hero-section {
+  background: linear-gradient(135deg, rgb(var(--background-rgb)) 0%, rgb(var(--surface-light)) 100%);
+  position: relative;
+}
+
+.hero-section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: radial-gradient(circle at 20% 80%, rgba(var(--accent-pastel), 0.2) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(var(--accent-soft), 0.15) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.section-heading {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 12px;
+}
+
+.section-heading::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, rgba(var(--accent-amber), 0.8), rgba(var(--accent-amber-soft), 0.6));
+  border-radius: 2px;
+}
+
+.skill-bar {
+  height: 8px;
+  background: rgb(var(--border-light));
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.skill-progress {
+  height: 100%;
+  background: linear-gradient(90deg, rgba(var(--accent-amber), 0.8), rgba(var(--accent-amber-soft), 0.9));
+  border-radius: 4px;
+}
+
+.card-hover {
+  transition: all 0.3s ease;
+  border: 1px solid rgb(var(--border-light));
+  background-color: rgb(var(--card-bg));
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+  border-color: rgba(var(--accent-amber), 0.3);
+}
+
+.modern-button {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  background: linear-gradient(135deg, rgba(var(--accent-amber), 0.1), rgba(var(--accent-amber-soft), 0.1));
+  border: 2px solid rgba(var(--accent-amber), 0.2);
+  backdrop-filter: blur(10px);
+}
+
+.modern-button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(var(--accent-amber), 0.1), transparent);
+  transition: all 0.6s ease;
+}
+
+.modern-button:hover {
+  border-color: rgba(var(--accent-amber), 0.4);
+  background: linear-gradient(135deg, rgba(var(--accent-amber), 0.15), rgba(var(--accent-amber-soft), 0.15));
+}
+
+/* Professional text styling */
+.professional-text {
+  font-family: var(--font-noto-serif);
+  letter-spacing: 0.025em;
+  line-height: 1.7;
+  color: rgb(var(--text-secondary));
+}
+
+/* Enhanced glassmorphism effect for better contrast with animated background */
+.glass-effect {
+  background: rgba(var(--card-bg), 0.85);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(var(--border-light), 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+/* Floating elements */
+.floating-element {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, rgba(var(--accent-amber), 1), rgba(var(--accent-amber-soft), 1));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Timeline styling */
+.timeline-line {
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(var(--accent-amber), 0.3) 20%,
+    rgba(var(--accent-amber), 0.6) 50%,
+    rgba(var(--accent-amber), 0.3) 80%,
+    transparent 100%
+  );
+}
+
+/* Enhanced focus states for accessibility */
+.focus-ring:focus {
+  outline: 2px solid rgba(var(--accent-amber), 0.6);
+  outline-offset: 2px;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgb(var(--surface-light));
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(var(--accent-amber), 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(var(--accent-amber), 0.5);
+}
+
+/* Enhanced entrance animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s ease-out forwards;
+  opacity: 0;
+}
+
+.animation-delay-300 {
+  animation-delay: 0.3s;
+}
+
+.animation-delay-600 {
+  animation-delay: 0.6s;
+}
+
+.animation-delay-900 {
+  animation-delay: 0.9s;
+}
+
+.animation-delay-1200 {
+  animation-delay: 1.2s;
+}
