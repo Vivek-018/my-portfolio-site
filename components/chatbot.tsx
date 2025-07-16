@@ -99,7 +99,7 @@ export default function Chatbot() {
       {/* Floating Chat Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className={`fixed bottom-6 right-6 z-50 p-4 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 focus-ring ${
+        className={`hidden md:block fixed bottom-6 right-6 z-50 p-4 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 focus-ring ${
           isOpen ? "scale-0 opacity-0" : "scale-100 opacity-100"
         } bg-amber-500 hover:bg-amber-600 text-slate-900`}
         aria-label="Open chat"
@@ -110,7 +110,7 @@ export default function Chatbot() {
 
       {/* Chat Window */}
       <div
-        className={`fixed bottom-6 right-6 z-50 w-96 h-[32rem] bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 transition-all duration-300 transform ${
+        className={`hidden md:block fixed bottom-6 right-6 z-50 w-96 h-[32rem] bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 transition-all duration-300 transform ${
           isOpen ? "scale-100 opacity-100" : "scale-0 opacity-0"
         }`}
         style={{ transformOrigin: "bottom right" }}
